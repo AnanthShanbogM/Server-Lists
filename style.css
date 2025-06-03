@@ -10,8 +10,18 @@ body {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
+input[type="file"] {
+  margin-bottom: 10px;
+}
 table {
   width: 100%;
-  margin-top: 20px;
   border-collapse: collapse;
+  margin-top: 20px;
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+td[contenteditable="true"]:focus {
+  background: #f0f8ff;
 }

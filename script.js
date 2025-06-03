@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const blob = new Blob([csv], { type: 'text/csv' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'ecl_servers.csv';
+    link.download = 'ecl_dashboard.csv';
     link.click();
   });
 });

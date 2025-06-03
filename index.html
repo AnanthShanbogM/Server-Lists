@@ -18,7 +18,9 @@
   </div>
 
   <script src="libs/pdf.min.js"></script>
-  <script src="libs/pdf.worker.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'libs/pdf.worker.min.js';
+  </script>
   <script src="libs/jquery.min.js"></script>
   <script src="libs/datatables.min.js"></script>
   <script src="script.js"></script>
