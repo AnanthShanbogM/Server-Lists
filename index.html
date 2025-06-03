@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECL Server Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="libs/datatables.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1>ECL Server Dashboard</h1>
+    <input type="file" id="pdf-upload" accept=".pdf">
+    <div id="table-container">
+      <table id="server-table" class="display"></table>
+    </div>
+    <button id="add-row">Add Row</button>
+    <button id="export-csv">Export CSV</button>
+  </div>
+
+  <script src="libs/pdf.min.js"></script>
+  <script src="libs/datatables.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
