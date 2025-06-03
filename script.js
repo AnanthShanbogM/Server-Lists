@@ -1,81 +1,71 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-  const tableElement = document.getElementById('server-table');
   let dataTable;
+  const tableElement = document.getElementById('server-table');
 
   document.getElementById('pdf-upload').addEventListener('change', async (event) => {
     const file = event.target.files[0];
     if (file && file.type === "application/pdf") {
       const reader = new FileReader();
-      reader.onload = async function() {
+      reader.onload = async function () {
         const typedArray = new Uint8Array(this.result);
         const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
         let rawText = '';
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
-          const strings = content.items.map(item => item.str).join(' ');
-          rawText += strings + '\n';
+          rawText += content.items.map(item => item.str).join(' ') + '\n';
         }
-        const rows = parseServerData(rawText);
-        renderTable(rows);
+        const parsedData = parseData(rawText);
+        populateTable(parsedData);
       };
       reader.readAsArrayBuffer(file);
     }
   });
 
-  function parseServerData(text) {
+  function parseData(text) {
     const lines = text.split('\n').filter(line => line.trim());
-    const header = ["ID", "Server", "Location", "Category", "App Group", "Server Role", "IP Address", "OS", "Arch", "Specification", "Type", "Zone", "Level", "Purpose", "Status"];
     const data = [];
-    for (let line of lines) {
-      const parts = line.trim().split(/\s{2,}/);
-      if (parts.length >= 6) data.push(parts);
-    }
-    return [header, ...data];
+    lines.forEach(line => {
+      const parts = line.split(/\s{2,}/);
+      if (parts.length > 2) data.push(parts);
+    });
+    return data;
   }
 
-  function renderTable(rows) {
-    if (dataTable) dataTable.destroy();
-    tableElement.innerHTML = '';
-    const thead = tableElement.createTHead();
-    const tbody = tableElement.createTBody();
-
-    let headRow = thead.insertRow();
-    rows[0].forEach(header => {
-      let th = document.createElement('th');
-      th.innerText = header;
-      headRow.appendChild(th);
-    });
-
-    rows.slice(1).forEach(row => {
-      let tr = tbody.insertRow();
+  function populateTable(data) {
+    tableElement.innerHTML = '<thead><tr>' + data[0].map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody></tbody>';
+    const tbody = tableElement.querySelector('tbody');
+    data.slice(1).forEach(row => {
+      const tr = document.createElement('tr');
       row.forEach(cell => {
-        let td = tr.insertCell();
+        const td = document.createElement('td');
         td.contentEditable = true;
-        td.innerText = cell;
+        td.textContent = cell;
+        tr.appendChild(td);
       });
+      tbody.appendChild(tr);
     });
-
-    dataTable = new DataTable(tableElement);
+    if (dataTable) dataTable.destroy();
+    dataTable = new DataTable('#server-table');
   }
 
   document.getElementById('add-row').addEventListener('click', () => {
-    const newRow = tableElement.insertRow();
+    const row = tableElement.insertRow(-1);
     for (let i = 0; i < tableElement.rows[0].cells.length; i++) {
-      const cell = newRow.insertCell();
+      const cell = row.insertCell();
       cell.contentEditable = true;
-      cell.innerText = '';
+      cell.textContent = '';
     }
   });
 
   document.getElementById('export-csv').addEventListener('click', () => {
-    let csv = [];
+    let csv = '';
     for (let row of tableElement.rows) {
-      const cells = Array.from(row.cells).map(td => `"${td.innerText.replace(/"/g, '""')}"`);
-      csv.push(cells.join(','));
+      const cells = Array.from(row.cells).map(td => `"${td.textContent}"`);
+      csv += cells.join(',') + '\n';
     }
-    const blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'ecl_servers.csv';

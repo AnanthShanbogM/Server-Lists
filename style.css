@@ -10,10 +10,8 @@ body {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
-#pdf-upload {
-  margin-bottom: 20px;
-}
-#server-table {
+table {
   width: 100%;
   margin-top: 20px;
+  border-collapse: collapse;
 }
